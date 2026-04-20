@@ -4,7 +4,7 @@ from typing import Annotated
 import typer
 
 from todoist_cli import __version__
-from todoist_cli.commands import auth
+from todoist_cli.commands import auth, projects, tasks
 
 DEFAULT_BASE_URL = "https://api.todoist.com/api/v1"
 
@@ -22,6 +22,8 @@ app = typer.Typer(
     invoke_without_command=True,
 )
 app.add_typer(auth.app, name="auth")
+app.add_typer(tasks.app, name="tasks")
+app.add_typer(projects.app, name="projects")
 
 
 @app.callback()
