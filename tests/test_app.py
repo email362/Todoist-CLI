@@ -17,6 +17,9 @@ def test_help_includes_global_options() -> None:
     assert "--no-color" in result.output
     assert "tasks" in result.output
     assert "projects" in result.output
+    assert "sections" in result.output
+    assert "labels" in result.output
+    assert "comments" in result.output
 
 
 def test_version_option() -> None:

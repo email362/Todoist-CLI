@@ -2,9 +2,9 @@
 
 A Python command-line tool for Todoist API operations.
 
-This repository is currently at milestone 3: project skeleton, authentication
-configuration, the HTTP client foundation, and first-class task and project
-commands.
+This repository is currently at milestone 4: project skeleton, authentication
+configuration, the HTTP client foundation, and first-class task, project,
+section, label, and comment commands.
 
 ## Install
 
@@ -21,6 +21,9 @@ todoist tasks list
 todoist tasks add "Buy milk" --due "tomorrow"
 todoist projects list
 todoist projects add "Shopping List"
+todoist sections list --project-id 123
+todoist labels list
+todoist comments add --task-id 456 "Need one bottle"
 ```
 
 Authentication precedence:
@@ -46,4 +49,5 @@ mypy
 ## Scope
 
 The planned CLI shape and milestones are tracked in `PLAN.md`. Current code
-intentionally limits resource commands to milestone 3 tasks and projects.
+intentionally limits resource commands to milestone 4 tasks, projects,
+sections, labels, and comments.
