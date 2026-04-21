@@ -4,7 +4,16 @@ from typing import Annotated
 import typer
 
 from todoist_cli import __version__
-from todoist_cli.commands import auth, comments, labels, projects, sections, tasks
+from todoist_cli.commands import (
+    auth,
+    comments,
+    labels,
+    projects,
+    raw,
+    sections,
+    sync,
+    tasks,
+)
 
 DEFAULT_BASE_URL = "https://api.todoist.com/api/v1"
 
@@ -27,6 +36,8 @@ app.add_typer(projects.app, name="projects")
 app.add_typer(sections.app, name="sections")
 app.add_typer(labels.app, name="labels")
 app.add_typer(comments.app, name="comments")
+app.add_typer(sync.app, name="sync")
+app.command("raw")(raw.raw_request)
 
 
 @app.callback()

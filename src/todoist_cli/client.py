@@ -26,8 +26,12 @@ class TodoistClient:
         path: str,
         *,
         params: dict[str, Any] | None = None,
-        json: dict[str, Any] | None = None,
+        json: Any | None = None,
+        data: dict[str, Any] | None = None,
     ) -> Any:
+        if json is not None and data is not None:
+            raise TodoistClientError("Pass either JSON or form data, not both.")
+
         request_path = path if path.startswith("/") else f"/{path}"
         headers = {
             "Authorization": f"Bearer {self.token}",
@@ -44,6 +48,7 @@ class TodoistClient:
                 f"{self.base_url}{request_path}",
                 params=params,
                 json=json,
+                data=data,
                 headers=headers,
                 timeout=self.timeout,
             )
