@@ -48,6 +48,33 @@ def test_comments_list_sends_task_filter_and_renders_table() -> None:
 
 
 @respx.mock
+def test_comments_list_renders_wrapped_results_payload() -> None:
+    respx.get("https://api.todoist.test/comments").mock(
+        return_value=httpx.Response(
+            200,
+            json={
+                "results": [
+                    {
+                        "id": "comment-1",
+                        "content": "Need one bottle",
+                        "task_id": "task-1",
+                        "posted_at": "2026-04-21T12:00:00Z",
+                    }
+                ]
+            },
+        )
+    )
+
+    result = runner.invoke(
+        app,
+        command("comments", "list", "--task-id", "task-1"),
+    )
+
+    assert result.exit_code == 0
+    assert "Need one bottle" in result.output
+
+
+@respx.mock
 def test_comments_list_sends_project_filter() -> None:
     route = respx.get("https://api.todoist.test/comments").mock(
         return_value=httpx.Response(200, json=[]),

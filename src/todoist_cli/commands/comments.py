@@ -43,6 +43,10 @@ def list_comments(
         data = client_from_context(ctx).get("/comments", params=params)
     except TodoistCLIError as exc:
         raise_click_error(exc)
+    if isinstance(data, dict):
+        wrapped_results = data.get("results")
+        if isinstance(wrapped_results, list):
+            data = wrapped_results
     render_output(data, columns=COMMENT_COLUMNS, **output_options(ctx))
 
 

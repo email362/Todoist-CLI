@@ -46,6 +46,31 @@ def test_labels_list_renders_table() -> None:
 
 
 @respx.mock
+def test_labels_list_renders_wrapped_results_payload() -> None:
+    respx.get("https://api.todoist.test/labels").mock(
+        return_value=httpx.Response(
+            200,
+            json={
+                "results": [
+                    {
+                        "id": "label-1",
+                        "name": "Errand",
+                        "color": "berry_red",
+                        "order": 1,
+                        "is_favorite": False,
+                    }
+                ]
+            },
+        )
+    )
+
+    result = runner.invoke(app, command("labels", "list"))
+
+    assert result.exit_code == 0
+    assert "Errand" in result.output
+
+
+@respx.mock
 def test_labels_add_sends_payload_and_renders_json() -> None:
     route = respx.post("https://api.todoist.test/labels").mock(
         return_value=httpx.Response(

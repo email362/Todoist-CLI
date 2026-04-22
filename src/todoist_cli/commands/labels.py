@@ -31,6 +31,10 @@ def list_labels(ctx: typer.Context) -> None:
         data = client_from_context(ctx).get("/labels")
     except TodoistCLIError as exc:
         raise_click_error(exc)
+    if isinstance(data, dict):
+        wrapped_results = data.get("results")
+        if isinstance(wrapped_results, list):
+            data = wrapped_results
     render_output(data, columns=LABEL_COLUMNS, **output_options(ctx))
 
 
