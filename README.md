@@ -43,7 +43,7 @@ todoist tasks list
 todoist tasks add "Buy milk" --due "tomorrow"
 todoist projects list
 todoist projects add "Shopping List"
-todoist sections list --project-id 123
+todoist sections list
 todoist labels list
 todoist comments add --task-id 456 "Need one bottle"
 todoist sync all
@@ -105,7 +105,7 @@ For scripts and CI, prefer `TODOIST_API_TOKEN` instead of `todoist auth login`:
 
 ```bash
 export TODOIST_API_TOKEN="..."
-todoist --format json tasks list --filter "today"
+todoist --format json tasks list --filter-query "today"
 ```
 
 Use `--format json` when a script needs the full API-shaped response, or
