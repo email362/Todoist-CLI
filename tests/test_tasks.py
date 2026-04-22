@@ -23,7 +23,7 @@ def command(*args: str) -> list[str]:
 
 @respx.mock
 def test_tasks_list_renders_table_and_sends_filters() -> None:
-    route = respx.get("https://api.todoist.test/tasks").mock(
+    route = respx.get("https://api.todoist.test/tasks/filter").mock(
         return_value=httpx.Response(
             200,
             json=[
@@ -33,7 +33,7 @@ def test_tasks_list_renders_table_and_sends_filters() -> None:
                     "project_id": "project-1",
                     "due": {"date": "2026-04-20"},
                     "priority": 4,
-                    "is_completed": False,
+                    "checked": False,
                 }
             ],
         )
@@ -48,8 +48,8 @@ def test_tasks_list_renders_table_and_sends_filters() -> None:
             "project-1",
             "--section-id",
             "section-1",
-            "--label-id",
-            "label-1",
+            "--label",
+            "errand",
             "--filter",
             "today",
             "--ids",
@@ -61,11 +61,8 @@ def test_tasks_list_renders_table_and_sends_filters() -> None:
     assert "Buy milk" in result.output
     request = route.calls.last.request
     assert request.headers["Authorization"] == "Bearer test-token"
-    assert request.url.params["project_id"] == "project-1"
-    assert request.url.params["section_id"] == "section-1"
-    assert request.url.params["label_id"] == "label-1"
-    assert request.url.params["filter"] == "today"
-    assert request.url.params["ids"] == "task-1,task-2"
+    assert request.url.path == "/tasks/filter"
+    assert request.url.params["query"] == "today"
 
 
 @respx.mock
@@ -81,7 +78,7 @@ def test_tasks_list_renders_wrapped_results_response() -> None:
                         "project_id": "project-1",
                         "due": {"date": "2026-04-20"},
                         "priority": 4,
-                        "is_completed": False,
+                        "checked": False,
                     }
                 ],
                 "next_cursor": None,
@@ -117,10 +114,10 @@ def test_tasks_add_sends_payload_and_renders_json() -> None:
             "section-1",
             "--parent-id",
             "parent-1",
-            "--label-id",
-            "label-1",
-            "--label-id",
-            "label-2",
+            "--label",
+            "errand",
+            "--label",
+            "shopping",
             "--due",
             "tomorrow",
             "--priority",
@@ -138,7 +135,7 @@ def test_tasks_add_sends_payload_and_renders_json() -> None:
         "project_id": "project-1",
         "section_id": "section-1",
         "parent_id": "parent-1",
-        "label_ids": ["label-1", "label-2"],
+        "labels": ["errand", "shopping"],
         "due_string": "tomorrow",
         "priority": 4,
     }
@@ -174,8 +171,8 @@ def test_tasks_update_sends_only_changed_fields() -> None:
             "task-1",
             "--content",
             "Buy oat milk",
-            "--label-id",
-            "label-1",
+            "--label",
+            "errand",
         ),
     )
 
@@ -183,7 +180,7 @@ def test_tasks_update_sends_only_changed_fields() -> None:
     assert "Buy oat milk" in result.output
     assert json.loads(route.calls.last.request.content) == {
         "content": "Buy oat milk",
-        "label_ids": ["label-1"],
+        "labels": ["errand"],
     }
 
 

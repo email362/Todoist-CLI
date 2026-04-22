@@ -19,21 +19,22 @@ SECTION_COLUMNS: list[Column] = [
     ("ID", "id"),
     ("Name", "name"),
     ("Project", "project_id"),
-    ("Order", "order"),
+    ("Order", "section_order"),
 ]
 
 
 @app.command("list")
 def list_sections(
     ctx: typer.Context,
-    project_id: Annotated[str, typer.Option("--project-id", help="Project ID.")],
+    project_id: Annotated[
+        str | None,
+        typer.Option("--project-id", help="Project ID."),
+    ] = None,
 ) -> None:
     """List sections in a project."""
     try:
-        data = client_from_context(ctx).get(
-            "/sections",
-            params={"project_id": project_id},
-        )
+        params = compact_dict({"project_id": project_id})
+        data = client_from_context(ctx).get("/sections", params=params)
     except TodoistCLIError as exc:
         raise_click_error(exc)
     if isinstance(data, dict):

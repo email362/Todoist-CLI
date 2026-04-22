@@ -21,7 +21,7 @@ TASK_COLUMNS: list[Column] = [
     ("Project", "project_id"),
     ("Due", "due"),
     ("Priority", "priority"),
-    ("Completed", "is_completed"),
+    ("Completed", "checked"),
 ]
 
 
@@ -38,11 +38,19 @@ def list_tasks(
     ] = None,
     label_id: Annotated[
         str | None,
-        typer.Option("--label-id", help="Filter by label ID."),
+        typer.Option(
+            "--label",
+            "--label-id",
+            help="Filter by label name.",
+        ),
     ] = None,
     filter_text: Annotated[
         str | None,
-        typer.Option("--filter", help="Todoist filter query."),
+        typer.Option(
+            "--filter-query",
+            "--filter",
+            help="Todoist filter query.",
+        ),
     ] = None,
     ids: Annotated[
         str | None,
@@ -50,17 +58,20 @@ def list_tasks(
     ] = None,
 ) -> None:
     """List active tasks."""
+    path = "/tasks"
     params = compact_dict(
         {
             "project_id": project_id,
             "section_id": section_id,
-            "label_id": label_id,
-            "filter": filter_text,
+            "label": label_id,
             "ids": ids,
         }
     )
+    if filter_text is not None:
+        path = "/tasks/filter"
+        params = {"query": filter_text}
     try:
-        data = client_from_context(ctx).get("/tasks", params=params)
+        data = client_from_context(ctx).get(path, params=params)
     except TodoistCLIError as exc:
         raise_click_error(exc)
     if isinstance(data, dict):
@@ -90,9 +101,13 @@ def add_task(
         str | None,
         typer.Option("--parent-id", help="Parent task ID."),
     ] = None,
-    label_ids: Annotated[
+    labels: Annotated[
         list[str] | None,
-        typer.Option("--label-id", help="Label ID. Can be used multiple times."),
+        typer.Option(
+            "--label",
+            "--label-id",
+            help="Label name. Can be used multiple times.",
+        ),
     ] = None,
     due: Annotated[
         str | None,
@@ -111,7 +126,7 @@ def add_task(
             "project_id": project_id,
             "section_id": section_id,
             "parent_id": parent_id,
-            "label_ids": label_ids or None,
+            "labels": labels or None,
             "due_string": due,
             "priority": priority,
         }
@@ -156,9 +171,13 @@ def update_task(
         int | None,
         typer.Option("--priority", min=1, max=4, help="Priority from 1 to 4."),
     ] = None,
-    label_ids: Annotated[
+    labels: Annotated[
         list[str] | None,
-        typer.Option("--label-id", help="Label ID. Can be used multiple times."),
+        typer.Option(
+            "--label",
+            "--label-id",
+            help="Label name. Can be used multiple times.",
+        ),
     ] = None,
 ) -> None:
     """Update a task."""
@@ -168,7 +187,7 @@ def update_task(
             "description": description,
             "due_string": due,
             "priority": priority,
-            "label_ids": label_ids or None,
+            "labels": labels or None,
         }
     )
     try:

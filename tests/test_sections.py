@@ -31,16 +31,13 @@ def test_sections_list_sends_project_filter_and_renders_table() -> None:
                     "id": "section-1",
                     "name": "Groceries",
                     "project_id": "project-1",
-                    "order": 2,
+                    "section_order": 2,
                 }
             ],
         )
     )
 
-    result = runner.invoke(
-        app,
-        command("sections", "list", "--project-id", "project-1"),
-    )
+    result = runner.invoke(app, command("sections", "list", "--project-id", "project-1"))
 
     assert result.exit_code == 0
     assert "Groceries" in result.output
@@ -58,20 +55,30 @@ def test_sections_list_renders_wrapped_results_payload() -> None:
                         "id": "section-1",
                         "name": "Groceries",
                         "project_id": "project-1",
-                        "order": 2,
+                        "section_order": 2,
                     }
                 ]
             },
         )
     )
 
-    result = runner.invoke(
-        app,
-        command("sections", "list", "--project-id", "project-1"),
-    )
+    result = runner.invoke(app, command("sections", "list"))
 
     assert result.exit_code == 0
     assert "Groceries" in result.output
+
+
+@respx.mock
+def test_sections_list_without_project_filter_omits_project_id_param() -> None:
+    route = respx.get("https://api.todoist.test/sections").mock(
+        return_value=httpx.Response(200, json=[]),
+    )
+
+    result = runner.invoke(app, command("sections", "list"))
+
+    assert result.exit_code == 0
+    assert "No results." in result.output
+    assert "project_id" not in route.calls.last.request.url.params
 
 
 @respx.mock
