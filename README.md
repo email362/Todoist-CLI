@@ -9,6 +9,13 @@ release polish documentation.
 
 ## Install
 
+Create and activate a virtual environment first:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
 For local development:
 
 ```bash
@@ -119,6 +126,7 @@ in scripts.
 ## Development
 
 ```bash
+source .venv/bin/activate
 python3 -m pip install -e ".[dev]"
 make check
 ```
@@ -139,6 +147,7 @@ and `python3 -m pytest`.
 Build a source distribution and wheel:
 
 ```bash
+source .venv/bin/activate
 python3 -m pip install -e ".[dev]"
 make build
 ```
