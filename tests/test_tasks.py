@@ -69,6 +69,33 @@ def test_tasks_list_renders_table_and_sends_filters() -> None:
 
 
 @respx.mock
+def test_tasks_list_renders_wrapped_results_response() -> None:
+    respx.get("https://api.todoist.test/tasks").mock(
+        return_value=httpx.Response(
+            200,
+            json={
+                "results": [
+                    {
+                        "id": "task-1",
+                        "content": "Buy milk",
+                        "project_id": "project-1",
+                        "due": {"date": "2026-04-20"},
+                        "priority": 4,
+                        "is_completed": False,
+                    }
+                ],
+                "next_cursor": None,
+            },
+        )
+    )
+
+    result = runner.invoke(app, command("tasks", "list"))
+
+    assert result.exit_code == 0
+    assert "Buy milk" in result.output
+
+
+@respx.mock
 def test_tasks_add_sends_payload_and_renders_json() -> None:
     route = respx.post("https://api.todoist.test/tasks").mock(
         return_value=httpx.Response(200, json={"id": "task-1", "content": "Buy milk"})
