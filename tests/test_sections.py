@@ -48,6 +48,33 @@ def test_sections_list_sends_project_filter_and_renders_table() -> None:
 
 
 @respx.mock
+def test_sections_list_renders_wrapped_results_payload() -> None:
+    respx.get("https://api.todoist.test/sections").mock(
+        return_value=httpx.Response(
+            200,
+            json={
+                "results": [
+                    {
+                        "id": "section-1",
+                        "name": "Groceries",
+                        "project_id": "project-1",
+                        "order": 2,
+                    }
+                ]
+            },
+        )
+    )
+
+    result = runner.invoke(
+        app,
+        command("sections", "list", "--project-id", "project-1"),
+    )
+
+    assert result.exit_code == 0
+    assert "Groceries" in result.output
+
+
+@respx.mock
 def test_sections_add_sends_payload_and_renders_json() -> None:
     route = respx.post("https://api.todoist.test/sections").mock(
         return_value=httpx.Response(

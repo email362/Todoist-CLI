@@ -43,6 +43,25 @@ def test_projects_list_renders_json() -> None:
 
 
 @respx.mock
+def test_projects_list_renders_wrapped_results_payload() -> None:
+    respx.get("https://api.todoist.test/projects").mock(
+        return_value=httpx.Response(
+            200,
+            json={
+                "results": [
+                    {"id": "project-1", "name": "Shopping", "is_favorite": False}
+                ]
+            },
+        )
+    )
+
+    result = runner.invoke(app, command("projects", "list"))
+
+    assert result.exit_code == 0
+    assert "Shopping" in result.output
+
+
+@respx.mock
 def test_projects_add_sends_payload_and_renders_table() -> None:
     route = respx.post("https://api.todoist.test/projects").mock(
         return_value=httpx.Response(
