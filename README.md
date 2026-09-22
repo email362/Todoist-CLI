@@ -127,8 +127,25 @@ in scripts.
 
 The reusable [Todoist CLI skill](skills/todoist-cli/SKILL.md) teaches agents how
 to install the command, verify account access, read Todoist data, and carry out
-requested changes. Copy the skill directory into an agent's skill location to
-use it outside this repository.
+requested changes.
+
+Install it globally in the shared `~/.agents/skills` directory:
+
+```bash
+npx skills add email362/Todoist-CLI --skill todoist-cli --agent universal --global -y
+```
+
+This creates `~/.agents/skills/todoist-cli`, which tools that support the shared
+Agent Skills directory can discover. Restart the agent after installation.
+
+To install the skill only for the current project, omit `--global`:
+
+```bash
+npx skills add email362/Todoist-CLI --skill todoist-cli --agent universal -y
+```
+
+The project installation creates `.agents/skills/todoist-cli` in the current
+directory.
 
 ## Development
 
