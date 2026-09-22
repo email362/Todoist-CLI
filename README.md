@@ -123,6 +123,13 @@ Example scripts are available in [examples/](examples/):
 Keep tokens in environment variables or secret managers. Do not hard-code tokens
 in scripts.
 
+## Agent skill
+
+The reusable [Todoist CLI skill](skills/todoist-cli/SKILL.md) teaches agents how
+to install the command, verify account access, read Todoist data, and carry out
+requested changes. Copy the skill directory into an agent's skill location to
+use it outside this repository.
+
 ## Development
 
 ```bash
