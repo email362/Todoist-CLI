@@ -13,6 +13,7 @@ authors = [
   { name = "Todoist CLI contributors" },
 ]
 dependencies = [
+  "click>=8.1.0",
   "httpx>=0.27.0",
   "platformdirs>=4.2.0",
   "typer>=0.12.0",
